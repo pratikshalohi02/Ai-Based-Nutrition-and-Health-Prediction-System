@@ -28,11 +28,7 @@ def create_app() -> Flask:
     @jwt.invalid_token_loader
     def invalid_token_callback(error):
         error_msg = str(error)
-        print(f"DEBUG: Invalid token error: {error_msg}")
-        print(f"DEBUG: Error type: {type(error).__name__}")
-        # Provide more specific error message
         if "Subject must be a string" in error_msg:
-            print("DEBUG: Subject/identity issue detected - clearing token and requiring login")
             return jsonify({"error": "Invalid token format. Please login again."}), 401
         return jsonify({"error": "Invalid token. Please login again."}), 401
 
@@ -47,7 +43,6 @@ def create_app() -> Flask:
     @jwt.user_lookup_loader
     def user_lookup_callback(_jwt_header, jwt_data):
         identity = jwt_data["sub"]
-        print(f"DEBUG: JWT identity extracted: {identity} (type: {type(identity).__name__})")
         return identity
 
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
