@@ -1,0 +1,24 @@
+# Render Deployment Configuration for NutriHealth
+# This file defines how to deploy both backend and frontend
+
+services:
+  - type: web
+    name: nutrihealth-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: JWT_SECRET_KEY
+        scope: secret
+      - key: PORT
+        value: "5000"
+    
+  - type: static_site
+    name: nutrihealth-frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://nutrihealth-backend.onrender.com
